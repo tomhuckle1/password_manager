@@ -53,5 +53,8 @@ class CategoryService:
         except IntegrityError:
             return ["A category with that name already exists."], data
 
+    def can_delete_category(self, cat: Category) -> bool:
+        return not self.categories.has_password_entries(cat)
+
     def delete_category(self, cat: Category) -> None:
         self.categories.delete(cat)

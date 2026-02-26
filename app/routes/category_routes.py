@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 category_bp = Blueprint("category", __name__)
 
@@ -70,8 +70,20 @@ def edit_category(category_id: int):
 @category_bp.route("/categories/<int:category_id>/delete", methods=["POST"])
 @login_required
 def delete_category(category_id: int):
-    cat = category_service().get_category(category_id)
-    category_service().delete_category(cat)
+    if not current_user.is_admin():
+        flash("You do not have permission to delete categories.", "danger")
+        return redirect(url_for("category.categories"))
 
+    cat = category_service().get_category(category_id)
+
+    if not category_service().can_delete_category(cat):
+        flash(
+            "Cannot delete category while it contains passwords. "
+            "Delete all passwords in this category first.",
+            "danger",
+        )
+        return redirect(url_for("category.categories"))
+
+    category_service().delete_category(cat)
     flash("Category deleted successfully.", "success")
     return redirect(url_for("category.categories"))

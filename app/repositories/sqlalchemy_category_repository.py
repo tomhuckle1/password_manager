@@ -40,3 +40,6 @@ class SqlAlchemyCategoryRepository(CategoryRepository):
         except IntegrityError:
             self.db.session.rollback()
             raise
+
+    def has_password_entries(self, category: Category) -> bool:
+        return bool(category.password_entries) and len(category.password_entries) > 0

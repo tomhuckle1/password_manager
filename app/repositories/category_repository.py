@@ -19,3 +19,6 @@ class CategoryRepository(Protocol):
 
     def delete(self, category: Category) -> None:
         ...
+
+    def has_password_entries(self, category: Category) -> bool:
+        ...
