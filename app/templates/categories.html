@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h3 class="mb-0">
+      <i class="bi bi-tags-fill me-2"></i>Categories
+    </h3>
+    <div class="text-muted small">
+      Manage your password categories
+    </div>
+  </div>
+
+  <a href="{{ url_for('category.new_category') }}"
+     class="btn btn-dark btn-sm">
+    <i class="bi bi-plus-lg me-1"></i> New Category
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+
+    {% if categories|length == 0 %}
+      <div class="p-3 text-muted">
+        No categories available.
+      </div>
+    {% else %}
+      <div class="list-group list-group-flush">
+
+        {% for cat in categories %}
+          <div class="list-group-item d-flex align-items-center justify-content-between">
+
+            <div>
+              <div class="fw-semibold">
+                <i class="bi bi-folder2-open me-2 text-muted"></i>
+                {{ cat.name }}
+              </div>
+              <div class="small text-muted">
+                {{ cat.description or "No description" }}
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+
+              <a class="btn btn-sm btn-outline-primary"
+                 href="{{ url_for('category.edit_category', category_id=cat.id) }}">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+
+              <form method="POST"
+                    action="{{ url_for('category.delete_category', category_id=cat.id) }}">
+                <button class="btn btn-sm btn-outline-danger"
+                        type="submit">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+
+            </div>
+
+          </div>
+        {% endfor %}
+
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

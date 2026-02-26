@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% set mode = form_mode or "create" %}
+{% set is_edit = (mode == "edit") %}
+{% set fd = form_data or {} %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h3 class="mb-0">
+      <i class="bi {{ 'bi-pencil-square' if is_edit else 'bi-plus-circle' }} me-2"></i>
+      {{ "Edit Category" if is_edit else "New Category" }}
+    </h3>
+  </div>
+
+  <a class="btn btn-outline-secondary btn-sm"
+     href="{{ url_for('category.categories') }}">
+    Back
+  </a>
+</div>
+
+<form method="POST" class="card shadow-sm">
+  <div class="card-body">
+
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input
+        class="form-control"
+        name="name"
+        value="{{ fd.get('name', '') }}"
+        required
+      >
+      <div class="form-text">Max 60 characters.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        name="description"
+        rows="3"
+      >{{ fd.get('description', '') }}</textarea>
+      <div class="form-text">Optional. Max 200 characters.</div>
+    </div>
+
+  </div>
+
+  <div class="card-footer d-flex justify-content-end gap-2">
+    <a class="btn btn-outline-secondary btn-sm"
+       href="{{ url_for('category.categories') }}">
+      Cancel
+    </a>
+
+    <button class="btn btn-dark btn-sm" type="submit">
+      <i class="bi bi-check-lg me-1"></i>
+      {{ "Save changes" if is_edit else "Save" }}
+    </button>
+  </div>
+</form>
+
+{% endblock %}
