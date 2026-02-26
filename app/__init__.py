@@ -38,10 +38,13 @@ def create_app(config_overrides: dict | None = None) -> Flask:
 
     from app.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
     from app.services.auth_service import AuthService
+    from app.utils.password_hashing import BcryptPasswordHasher
 
     app.extensions.setdefault("services", {})
+
     app.extensions["services"]["auth"] = AuthService(
-        users=SqlAlchemyUserRepository(db)
+        users=SqlAlchemyUserRepository(db),
+        hasher=BcryptPasswordHasher(bcrypt),
     )
 
     return app

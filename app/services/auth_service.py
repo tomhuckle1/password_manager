@@ -1,13 +1,14 @@
 from flask_login import login_user, logout_user
 
-from app import bcrypt
 from app.models.user import User, ROLE_ADMIN, ROLE_REGULAR
 from app.repositories.user_repository import UserRepository
+from app.utils.password_hashing import PasswordHasher
 
 
 class AuthService:
-    def __init__(self, users: UserRepository):
+    def __init__(self, users: UserRepository, hasher: PasswordHasher):
         self.users = users
+        self.hasher = hasher
 
     def register_user(self, form):
         name = (form.get("name") or "").strip()
@@ -29,12 +30,11 @@ class AuthService:
             return None, errors
 
         role = ROLE_ADMIN if is_admin else ROLE_REGULAR
-        pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
         user = User(
             name=name,
             email=email,
-            password_hash=pw_hash,
+            password_hash=self.hasher.hash(password),
             role=role,
         )
 
@@ -46,7 +46,7 @@ class AuthService:
         password = form.get("password") or ""
 
         user = self.users.get_by_email(email)
-        if not user or not bcrypt.check_password_hash(user.password_hash, password):
+        if not user or not self.hasher.verify(user.password_hash, password):
             return None, ["Invalid email or password."]
 
         login_user(user)
