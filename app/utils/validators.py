@@ -73,3 +73,23 @@ def validate_login_form(
         "email": email_clean,
         "password": pw,
     }, errors
+
+def validate_category_form(*, name: str | None, description: str | None):
+    errors: list[str] = []
+
+    name_clean = (name or "").strip()
+    description_clean = (description or "").strip()
+
+    if not name_clean:
+        errors.append("Name is required.")
+    if len(name_clean) > 60:
+        errors.append("Name must be 60 characters or fewer.")
+    if len(description_clean) > 200:
+        errors.append("Description must be 200 characters or fewer.")
+
+    data = {
+        "name": name_clean,
+        "description": description_clean or None,
+    }
+
+    return data, errors
