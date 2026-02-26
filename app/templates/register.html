@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+    <div class="card shadow-sm vault-card">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span class="vault-logo"><i class="bi bi-person-plus-fill"></i></span>
+          <h3 class="mb-0">Register</h3>
+        </div>
+
+        <form method="POST">
+          <div class="mb-3">
+            <label class="form-label">Full name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input class="form-control" type="text" name="name" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+              <input class="form-control" type="email" name="email" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input class="form-control" type="password" name="password" required>
+            </div>
+            <div class="form-text">
+              Must be at least 8 characters and include:
+              an uppercase letter, a lowercase letter, a number, and a symbol.
+            </div>   
+         </div>       
+
+          <div class="mb-3">
+            <label class="form-label">Confirm password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+              <input class="form-control" type="password" name="confirm" required>
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin">
+            <label class="form-check-label" for="is_admin">
+              Register as admin
+            </label>
+          </div>
+
+          <button class="btn btn-dark w-100" type="submit">
+            <i class="bi bi-check2-circle me-1"></i> Create account
+          </button>
+        </form>
+
+        <div class="mt-3 text-center">
+          <span class="text-muted">Already registered?</span>
+          <a href="{{ url_for('auth.login') }}">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
