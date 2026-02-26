@@ -1,9 +1,13 @@
 from flask_login import login_user, logout_user
-from app import db, bcrypt
+
+from app import bcrypt
 from app.models.user import User, ROLE_ADMIN, ROLE_REGULAR
+from app.repositories.user_repository import UserRepository
 
 
 class AuthService:
+    def __init__(self, users: UserRepository):
+        self.users = users
 
     def register_user(self, form):
         name = (form.get("name") or "").strip()
@@ -12,15 +16,13 @@ class AuthService:
         confirm = form.get("confirm") or ""
         is_admin = form.get("is_admin") == "on"
 
-        errors = []
+        errors: list[str] = []
 
         if not name or not email or not password or not confirm:
             errors.append("All fields are required.")
-
         if password != confirm:
             errors.append("Passwords do not match.")
-
-        if User.query.filter_by(email=email).first():
+        if self.users.get_by_email(email):
             errors.append("An account with that email already exists.")
 
         if errors:
@@ -36,17 +38,14 @@ class AuthService:
             role=role,
         )
 
-        db.session.add(user)
-        db.session.commit()
-
+        self.users.add(user)
         return user, []
 
     def login_with_credentials(self, form):
         email = (form.get("email") or "").strip().lower()
         password = form.get("password") or ""
 
-        user = User.query.filter_by(email=email).first()
-
+        user = self.users.get_by_email(email)
         if not user or not bcrypt.check_password_hash(user.password_hash, password):
             return None, ["Invalid email or password."]
 

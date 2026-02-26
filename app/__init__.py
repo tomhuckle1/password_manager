@@ -34,6 +34,14 @@ def create_app(config_overrides: dict | None = None) -> Flask:
     from app.routes.auth_routes import auth_bp
     app.register_blueprint(auth_bp)
 
-    from app import models 
+    from app import models  
+
+    from app.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
+    from app.services.auth_service import AuthService
+
+    app.extensions.setdefault("services", {})
+    app.extensions["services"]["auth"] = AuthService(
+        users=SqlAlchemyUserRepository(db)
+    )
 
     return app

@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user
-from app.services.auth_service import AuthService
 
 auth_bp = Blueprint("auth", __name__)
-auth_service = AuthService()
+
+
+def auth_service():
+    return current_app.extensions["services"]["auth"]
 
 
 def redirect_dashboard():
@@ -23,7 +25,7 @@ def register():
     if request.method == "GET":
         return render_template("register.html")
 
-    _user, errors = auth_service.register_user(request.form)
+    _user, errors = auth_service().register_user(request.form)
 
     if errors:
         for e in errors:
@@ -42,7 +44,7 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    _user, errors = auth_service.login_with_credentials(request.form)
+    _user, errors = auth_service().login_with_credentials(request.form)
 
     if errors:
         for e in errors:
@@ -56,6 +58,6 @@ def login():
 @auth_bp.route("/logout")
 @login_required
 def logout():
-    auth_service.logout_current_user()
+    auth_service().logout_current_user()
     flash("Logged out successfully.", "success")
     return redirect(url_for("auth.login"))
