@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_required
 
-from app.services.category_service import CategoryService
-
 category_bp = Blueprint("category", __name__)
-category_service = CategoryService()
+
+
+def category_service():
+    return current_app.extensions["services"]["category"]
 
 
 @category_bp.route("/categories")
@@ -12,7 +13,7 @@ category_service = CategoryService()
 def categories():
     return render_template(
         "categories.html",
-        categories=category_service.list_categories(),
+        categories=category_service().list_categories(),
         active_tab="categories",
     )
 
@@ -23,7 +24,7 @@ def new_category():
     form_data = {}
 
     if request.method == "POST":
-        _cat, errors, form_data = category_service.create_category(request.form)
+        _cat, errors, form_data = category_service().create_category(request.form)
 
         if errors:
             for e in errors:
@@ -43,10 +44,10 @@ def new_category():
 @category_bp.route("/categories/<int:category_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_category(category_id: int):
-    cat = category_service.get_category(category_id)
+    cat = category_service().get_category(category_id)
 
     if request.method == "POST":
-        errors, form_data = category_service.update_category(cat, request.form)
+        errors, form_data = category_service().update_category(cat, request.form)
 
         if errors:
             for e in errors:
@@ -69,8 +70,8 @@ def edit_category(category_id: int):
 @category_bp.route("/categories/<int:category_id>/delete", methods=["POST"])
 @login_required
 def delete_category(category_id: int):
-    cat = category_service.get_category(category_id)
-    category_service.delete_category(cat)
+    cat = category_service().get_category(category_id)
+    category_service().delete_category(cat)
 
     flash("Category deleted successfully.", "success")
     return redirect(url_for("category.categories"))

@@ -1,16 +1,20 @@
-# app/services/category_service.py
 from __future__ import annotations
 
-from app import db
+from sqlalchemy.exc import IntegrityError
+
 from app.models.category import Category
+from app.repositories.category_repository import CategoryRepository
 
 
 class CategoryService:
+    def __init__(self, categories: CategoryRepository):
+        self.categories = categories
+
     def list_categories(self):
-        return Category.query.order_by(Category.name).all()
+        return self.categories.list_ordered()
 
     def get_category(self, category_id: int) -> Category:
-        return Category.query.get_or_404(category_id)
+        return self.categories.get(category_id)
 
     def create_category(self, form):
         name = (form.get("name") or "").strip()
@@ -30,13 +34,11 @@ class CategoryService:
             return None, errors, data
 
         cat = Category(name=name, description=description or None)
-        db.session.add(cat)
 
         try:
-            db.session.commit()
+            self.categories.add(cat)
             return cat, [], data
-        except Exception:
-            db.session.rollback()
+        except IntegrityError:
             return None, ["A category with that name already exists."], data
 
     def update_category(self, cat: Category, form):
@@ -60,12 +62,10 @@ class CategoryService:
         cat.description = description or None
 
         try:
-            db.session.commit()
+            self.categories.commit()
             return [], data
-        except Exception:
-            db.session.rollback()
+        except IntegrityError:
             return ["A category with that name already exists."], data
 
     def delete_category(self, cat: Category) -> None:
-        db.session.delete(cat)
-        db.session.commit()
+        self.categories.delete(cat)
