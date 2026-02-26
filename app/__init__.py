@@ -3,11 +3,17 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
 
 db = SQLAlchemy()
 migrate = Migrate()
+login_manager = LoginManager()
+bcrypt = Bcrypt()
 
 login_manager.session_protection = "strong"
+login_manager.login_view = "auth.login"
+
 
 def create_app(config_overrides: dict | None = None) -> Flask:
     load_dotenv()
@@ -22,11 +28,12 @@ def create_app(config_overrides: dict | None = None) -> Flask:
 
     db.init_app(app)
     migrate.init_app(app, db)
+    login_manager.init_app(app)
+    bcrypt.init_app(app)
 
-    from app import models  
+    from app.routes.auth_routes import auth_bp
+    app.register_blueprint(auth_bp)
 
-    @app.get("/")
-    def health():
-        return {"status": "ok"}
+    from app import models 
 
     return app
