@@ -25,7 +25,7 @@ def register():
     if request.method == "GET":
         return render_template("register.html")
 
-    _user, errors = auth_service().register_user(request.form)
+    _user, errors, _data = auth_service().register_user(request.form)
 
     if errors:
         for e in errors:
