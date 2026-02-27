@@ -1,5 +1,5 @@
-import { initCategoryDelete } from "./ui/category/delete.js";
+import { initClickHandlers } from "./handlers/clickHandlers.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  initCategoryDelete();
+  initClickHandlers();
 });

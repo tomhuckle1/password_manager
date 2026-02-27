@@ -17,6 +17,17 @@ def dashboard():
         active_tab="passwords",
     )
 
+@password_bp.route("/api/password/<int:entry_id>/password", methods=["POST"])
+@login_required
+def api_get_password(entry_id: int):
+    entry = password_service().get_entry_or_404(entry_id)
+
+    try:
+        pw = password_service().get_decrypted_password_for_entry(entry)
+        return jsonify({"password": pw})
+    except Exception:
+        return jsonify({"error": "Unable to decrypt password"}), 400
+
 
 @password_bp.route("/passwords/new", methods=["GET", "POST"])
 @login_required

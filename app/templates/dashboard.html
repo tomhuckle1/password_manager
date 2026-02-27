@@ -48,27 +48,51 @@
                   <div class="p-3 text-muted">No passwords in this category.</div>
                 {% else %}
                   <div class="list-group list-group-flush">
+
                     {% for e in cat.password_entries %}
                       <div class="list-group-item">
-                        <div class="d-flex align-items-center justify-content-between gap-2">
-                          <div style="min-width:0;">
+                        <div class="d-flex flex-column flex-md-row gap-2 align-items-start align-items-md-center">
+                          <div class="flex-grow-1" style="min-width:0;">
                             <div class="fw-semibold text-truncate">{{ e.name }}</div>
                             <div class="small text-muted text-truncate">{{ e.website }}</div>
+
+                            <!-- Inline reveal -->
+                            <div id="pwbox-{{ e.id }}"
+                                 class="mt-2 small font-monospace border rounded-3 p-2 bg-light d-none">
+                              <span id="pwtext-{{ e.id }}"></span>
+                            </div>
                           </div>
 
-                          <div class="d-flex gap-2 flex-shrink-0">
-                            <a class="btn btn-sm btn-outline-primary"
-                               href="{{ url_for('password.edit_password', entry_id=e.id) }}">
-                              <i class="bi bi-pencil-square"></i>
-                            </a>
+                          <!-- Action buttons -->
+                          <div class="d-flex flex-wrap gap-1 justify-content-end ms-md-auto">
 
-                            <form method="POST"
-                                  action="{{ url_for('password.delete_password', entry_id=e.id) }}"
-                                  class="m-0">
-                              <button class="btn btn-sm btn-outline-danger" type="submit">
-                                <i class="bi bi-trash3"></i>
-                              </button>
-                            </form>
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    title="Copy URL"
+                                    data-copy-url="{{ e.website }}">
+                              <i class="bi bi-link-45deg"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    title="Copy username"
+                                    data-copy-username="{{ e.account_username }}">
+                              <i class="bi bi-person"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    title="Copy password"
+                                    data-copy-password="{{ e.id }}">
+                              <i class="bi bi-clipboard"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    title="Reveal password"
+                                    data-toggle-password="{{ e.id }}">
+                              <i class="bi bi-eye"></i>
+                            </button>
                           </div>
                         </div>
                       </div>
