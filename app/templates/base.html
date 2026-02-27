@@ -12,25 +12,67 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body class="bg-light d-flex flex-column min-vh-100">
+<body class="bg-light">
 
-    <!-- Navbar -->
-    <nav class="navbar bg-white border-bottom">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('auth.login') }}">
-        <i class="bi bi-shield-lock-fill"></i>
-        <span class="fw-semibold">STCS Vault</span>
+    <nav class="navbar navbar-expand-md bg-white border-bottom">
+    <div class="container-fluid px-3 px-md-4 d-flex align-items-center">
+
+        <!-- Logo -->
+        <div class="d-flex align-items-center">
+        <a class="navbar-brand d-flex align-items-center gap-2 mb-0"
+            href="{% if current_user.is_authenticated %}/dashboard{% else %}/login{% endif %}">
+            <span class="vault-brand-icon d-inline-flex align-items-center justify-content-center rounded-3">
+            <i class="bi bi-shield-lock-fill"></i>
+            </span>
+            <span class="fw-semibold">STCS Vault</span>
         </a>
+        </div>
 
+        <!-- Password / category toggle -->
         {% if current_user.is_authenticated %}
-        <a class="btn btn-sm btn-outline-dark" href="{{ url_for('auth.logout') }}">
-            <i class="bi bi-box-arrow-right me-1"></i> Logout
-        </a>
+        <div class="position-absolute start-50 translate-middle-x d-none d-md-block">
+        <div class="btn-group" role="group">
+            <a class="btn {% if active_tab == 'passwords' %}btn-dark{% else %}btn-outline-dark{% endif %}"
+            href="/dashboard">
+            <i class="bi bi-key-fill me-1"></i> Passwords
+            </a>
+            <a class="btn {% if active_tab == 'categories' %}btn-dark{% else %}btn-outline-dark{% endif %}"
+            href="/categories">
+            <i class="bi bi-tags-fill me-1"></i> Categories
+            </a>
+        </div>
+        </div>
         {% endif %}
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+
+        <!-- Burger -->
+        <button class="navbar-toggler d-md-none"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#vaultNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Login / logout -->
+        <div class="collapse navbar-collapse d-md-flex justify-content-end" id="vaultNav">
+            {% if current_user.is_authenticated %}
+            <a class="btn btn-sm btn-outline-secondary" href="/logout">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </a>
+            {% else %}
+            <div class="d-flex flex-column flex-md-row gap-2 mt-3 mt-md-0">
+                <a class="btn btn-sm btn-outline-dark" href="/register">Register</a>
+                <a class="btn btn-sm btn-dark" href="/login">Login</a>
+            </div>
+            {% endif %}
+        </div>
+
+        </div>
     </div>
     </nav>
 
-    <main class="container py-5 flex-grow-1">
+    <main class="container py-4">
 
     <!-- Flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -45,9 +87,9 @@
     {% endwith %}
 
     {% block content %}{% endblock %}
-
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script></body>
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
 </html>
