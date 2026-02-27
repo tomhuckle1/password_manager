@@ -51,6 +51,7 @@ def create_app(config_overrides: dict | None = None) -> Flask:
     from app.services.password_service import PasswordService
 
     from app.utils.password_hashing import BcryptPasswordHasher
+    from app.utils.encryptor import FernetEncryptor
 
     app.extensions.setdefault("services", {})
 
@@ -64,8 +65,9 @@ def create_app(config_overrides: dict | None = None) -> Flask:
     )
 
     app.extensions["services"]["password"] = PasswordService(
-    passwords=SqlAlchemyPasswordRepository(db),
-    categories=SqlAlchemyCategoryRepository(db),
-)
+        passwords=SqlAlchemyPasswordRepository(db),
+        categories=SqlAlchemyCategoryRepository(db),
+        encryptor=FernetEncryptor(app.config["ENCRYPTION_KEY"]),
+    )
 
     return app
