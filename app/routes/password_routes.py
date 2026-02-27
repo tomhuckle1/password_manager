@@ -111,6 +111,10 @@ def edit_password(entry_id: int):
 @password_bp.route("/passwords/<int:entry_id>/delete", methods=["POST"])
 @login_required
 def delete_password(entry_id: int):
+    if not current_user.is_admin():
+        flash("You do not have permission to delete passwords.", "danger")
+        return redirect(url_for("password.dashboard"))
+
     entry = password_service().get_entry_or_404(entry_id)
     password_service().delete_password_entry(entry)
 
