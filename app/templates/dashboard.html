@@ -7,7 +7,7 @@
     <div class="text-muted small">Grouped by category</div>
   </div>
 
-  <a class="btn btn-dark btn-sm text-nowrap" href="#">
+  <a class="btn btn-dark btn-sm text-nowrap" href="{{ url_for('password.new_password') }}">
     <i class="bi bi-plus-lg me-1"></i> New Password
   </a>
 </div>
@@ -22,7 +22,6 @@
 
         {% for cat in categories %}
           <div class="accordion-item">
-
             <h2 class="accordion-header" id="heading-{{ cat.id }}">
               <button class="accordion-button {% if not loop.first %}collapsed{% endif %}"
                       type="button"
@@ -32,7 +31,6 @@
                       aria-controls="collapse-{{ cat.id }}">
                 <i class="bi bi-folder2-open me-2"></i>
                 <span class="fw-semibold">{{ cat.name }}</span>
-
                 <span class="badge rounded-pill text-bg-light border ms-2">
                   {{ cat.password_entries|length }}
                 </span>
@@ -47,34 +45,39 @@
               <div class="accordion-body p-0">
 
                 {% if cat.password_entries|length == 0 %}
-                  <div class="p-3 text-muted">
-                    No passwords in this category.
-                  </div>
+                  <div class="p-3 text-muted">No passwords in this category.</div>
                 {% else %}
-
                   <div class="list-group list-group-flush">
-
                     {% for e in cat.password_entries %}
                       <div class="list-group-item">
+                        <div class="d-flex align-items-center justify-content-between gap-2">
+                          <div style="min-width:0;">
+                            <div class="fw-semibold text-truncate">{{ e.name }}</div>
+                            <div class="small text-muted text-truncate">{{ e.website }}</div>
+                          </div>
 
-                        <div class="fw-semibold">
-                          {{ e.name }}
+                          <div class="d-flex gap-2 flex-shrink-0">
+                            <a class="btn btn-sm btn-outline-primary"
+                               href="{{ url_for('password.edit_password', entry_id=e.id) }}">
+                              <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <form method="POST"
+                                  action="{{ url_for('password.delete_password', entry_id=e.id) }}"
+                                  class="m-0">
+                              <button class="btn btn-sm btn-outline-danger" type="submit">
+                                <i class="bi bi-trash3"></i>
+                              </button>
+                            </form>
+                          </div>
                         </div>
-
-                        <div class="small text-muted">
-                          {{ e.website }}
-                        </div>
-
                       </div>
                     {% endfor %}
-
                   </div>
-
                 {% endif %}
 
               </div>
             </div>
-
           </div>
         {% endfor %}
 
