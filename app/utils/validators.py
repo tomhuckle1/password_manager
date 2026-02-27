@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 
-
+# Auth 
 def validate_register_form(
     *,
     name: str | None,
@@ -74,6 +74,7 @@ def validate_login_form(
         "password": pw,
     }, errors
 
+# Category
 def validate_category_form(*, name: str | None, description: str | None):
     errors: list[str] = []
 
@@ -90,6 +91,67 @@ def validate_category_form(*, name: str | None, description: str | None):
     data = {
         "name": name_clean,
         "description": description_clean or None,
+    }
+
+    return data, errors
+
+URL_REGEX = re.compile(r"^(?:[a-z0-9-]+\.)+[a-z]{2,63}(?:/.*)?$", re.IGNORECASE)
+
+
+# Passwords
+def clean_website(website: str | None) -> str:
+    if not website:
+        return ""
+
+    s = website.strip().lower()
+    s = s.removeprefix("https://").removeprefix("http://").removeprefix("www.")
+    return s[:-1] if s.endswith("/") else s
+
+
+def validate_password_entry_form(
+    *,
+    name: str | None,
+    website: str | None,
+    account_username: str | None,
+    password_plain: str | None,
+    notes: str | None = None,
+    require_password: bool = True,
+) -> tuple[dict, list[str]]:
+    errors: list[str] = []
+
+    name_clean = (name or "").strip()
+    website_clean = clean_website(website)
+    username_clean = (account_username or "").strip()
+    pw = password_plain or ""
+    notes_clean = (notes or "").strip()
+
+    if not name_clean:
+        errors.append("Name is required.")
+    if not website_clean:
+        errors.append("Website is required.")
+    if not username_clean:
+        errors.append("Username is required.")
+    if require_password and not pw.strip():
+        errors.append("Password is required.")
+
+    if len(name_clean) > 120:
+        errors.append("Name must be 120 characters or fewer.")
+    if len(website_clean) > 200:
+        errors.append("Website must be 200 characters or fewer.")
+    if len(username_clean) > 120:
+        errors.append("Username must be 120 characters or fewer.")
+    if len(notes_clean) > 500:
+        errors.append("Notes must be 500 characters or fewer.")
+
+    if website_clean and not URL_REGEX.match(website_clean):
+        errors.append("Website must be a valid domain (e.g. example.com).")
+
+    data = {
+        "name": name_clean,
+        "website": website_clean,
+        "account_username": username_clean,
+        "password_plain": pw,
+        "notes": notes_clean or None,
     }
 
     return data, errors
