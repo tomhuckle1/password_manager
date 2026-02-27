@@ -5,19 +5,29 @@ from flask_login import current_user
 from app.models.password import PasswordEntry
 from app.repositories.password_repository import PasswordRepository
 from app.repositories.category_repository import CategoryRepository
+from app.utils.encryptor import Encryptor
 from app.utils.validators import validate_password_entry_form
 
 
 class PasswordService:
-    def __init__(self, passwords: PasswordRepository, categories: CategoryRepository):
+    def __init__(
+        self,
+        passwords: PasswordRepository,
+        categories: CategoryRepository,
+        encryptor: Encryptor,
+    ):
         self.passwords = passwords
         self.categories = categories
+        self.encryptor = encryptor
 
     def list_categories(self):
         return self.categories.list_ordered()
 
     def get_entry_or_404(self, entry_id: int) -> PasswordEntry:
         return self.passwords.get_or_404(entry_id)
+
+    def get_decrypted_password_for_entry(self, entry: PasswordEntry) -> str:
+        return self.encryptor.decrypt(entry.password_value)
 
     def create_password_entry(self, form):
         category_ids = form.getlist("category_ids")
@@ -36,7 +46,7 @@ class PasswordService:
             name=data["name"],
             website=data["website"],
             account_username=data["account_username"],
-            password_value=data["password_plain"],
+            password_value=self.encryptor.encrypt(data["password_plain"]),
             notes=data["notes"],
             created_by_user_id=current_user.id,
             updated_by_user_id=current_user.id,
@@ -68,7 +78,7 @@ class PasswordService:
         entry.updated_by_user_id = current_user.id
 
         if data["password_plain"].strip():
-            entry.password_value = data["password_plain"]
+            entry.password_value = self.encryptor.encrypt(data["password_plain"])
 
         self._apply_categories(entry, category_ids)
         self.passwords.commit()
