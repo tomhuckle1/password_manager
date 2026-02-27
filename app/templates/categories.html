@@ -1,62 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="d-flex align-items-center justify-content-between mb-3">
+<div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-2 mb-3">
   <div>
-    <h3 class="mb-0">
-      <i class="bi bi-tags-fill me-2"></i>Categories
-    </h3>
+    <h3 class="mb-0"><i class="bi bi-tags-fill me-2"></i>Categories</h3>
     <div class="text-muted small">
-      Manage your password categories
+      {% if current_user.is_admin() %}
+        Manage password categories
+      {% else %}
+        Categories you are allowed to view
+      {% endif %}
     </div>
   </div>
 
-  <a href="{{ url_for('category.new_category') }}"
-     class="btn btn-dark btn-sm">
+  <a href="{{ url_for('category.new_category') }}" class="btn btn-dark btn-sm text-nowrap">
     <i class="bi bi-plus-lg me-1"></i> New Category
   </a>
 </div>
 
-<div class="card shadow-sm">
+<div class="card shadow-sm vault-card">
   <div class="card-body p-0">
 
     {% if categories|length == 0 %}
-      <div class="p-3 text-muted">
-        No categories available.
-      </div>
+      <div class="p-3 text-muted">No categories available.</div>
     {% else %}
       <div class="list-group list-group-flush">
 
         {% for cat in categories %}
-          <div class="list-group-item d-flex align-items-center justify-content-between">
+          {% set pwd_count = cat.password_entries|length %}
 
-            <div>
-              <div class="fw-semibold">
-                <i class="bi bi-folder2-open me-2 text-muted"></i>
-                {{ cat.name }}
+          <div class="list-group-item category-row" role="button" tabindex="0">
+            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2">
+
+              <div class="flex-grow-1" style="min-width: 0;">
+                <div class="fw-semibold text-truncate">
+                  <i class="bi bi-folder2-open me-2 text-muted"></i>{{ cat.name }}
+                </div>
+                {% if cat.description %}
+                  <div class="small text-muted text-truncate">{{ cat.description }}</div>
+                {% else %}
+                  <div class="small text-muted">No description</div>
+                {% endif %}
               </div>
-              <div class="small text-muted">
-                {{ cat.description or "No description" }}
+
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge rounded-pill text-bg-light border">
+                  {{ pwd_count }}
+                </span>
               </div>
+
+              <div class="d-flex flex-wrap gap-1 ms-md-auto">
+                <a class="btn btn-sm btn-outline-primary"
+                   href="{{ url_for('category.edit_category', category_id=cat.id) }}"
+                   title="Edit category">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+
+                {% if current_user.is_admin() %}
+                  <form method="POST"
+                        action="{{ url_for('category.delete_category', category_id=cat.id) }}"
+                        class="m-0">
+
+                    <button class="btn btn-sm btn-outline-danger"
+                            type="button"
+                            title="Delete category"
+                            data-category-delete
+                            data-category-name="{{ cat.name|e }}"
+                            data-category-count="{{ pwd_count }}">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+
+                  </form>
+                {% endif %}
+              </div>
+
             </div>
-
-            <div class="d-flex gap-2">
-
-              <a class="btn btn-sm btn-outline-primary"
-                 href="{{ url_for('category.edit_category', category_id=cat.id) }}">
-                <i class="bi bi-pencil-square"></i>
-              </a>
-
-              <form method="POST"
-                    action="{{ url_for('category.delete_category', category_id=cat.id) }}">
-                <button class="btn btn-sm btn-outline-danger"
-                        type="submit">
-                  <i class="bi bi-trash3"></i>
-                </button>
-              </form>
-
-            </div>
-
           </div>
         {% endfor %}
 
@@ -65,5 +83,7 @@
 
   </div>
 </div>
+
+{% include "components/_category_delete_modals.html" %}
 
 {% endblock %}

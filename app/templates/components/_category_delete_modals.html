@@ -1,0 +1,43 @@
+<div class="modal fade" id="cannotDeleteCategoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cannot delete category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0" id="cannotDeleteCategoryText"></p>
+        <div class="text-muted small mt-2">
+          Delete all passwords in this category first.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" type="button" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteCategoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0" id="confirmDeleteCategoryText"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button class="btn btn-danger btn-sm" type="button" id="confirmDeleteCategoryBtn">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
