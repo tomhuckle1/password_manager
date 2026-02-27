@@ -22,3 +22,6 @@ class CategoryRepository(Protocol):
 
     def has_password_entries(self, category: Category) -> bool:
         ...
+    
+    def get_by_ids(self, ids: list[int]) -> List[Category]:
+        ...

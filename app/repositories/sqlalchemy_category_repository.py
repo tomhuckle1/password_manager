@@ -43,3 +43,8 @@ class SqlAlchemyCategoryRepository(CategoryRepository):
 
     def has_password_entries(self, category: Category) -> bool:
         return bool(category.password_entries) and len(category.password_entries) > 0
+
+    def get_by_ids(self, ids: list[int]) -> list[Category]:
+        if not ids:
+            return []
+        return Category.query.filter(Category.id.in_(ids)).all()

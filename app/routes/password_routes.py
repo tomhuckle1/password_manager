@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, jsonify, request, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 
-from app.services.password_service import PasswordService
-
 password_bp = Blueprint("password", __name__)
-password_service = PasswordService()
+
+
+def password_service():
+    return current_app.extensions["services"]["password"]
 
 
 @password_bp.route("/dashboard")
@@ -12,7 +13,7 @@ password_service = PasswordService()
 def dashboard():
     return render_template(
         "dashboard.html",
-        categories=password_service.list_categories(),
+        categories=password_service().list_categories(),
         active_tab="passwords",
     )
 
@@ -20,18 +21,25 @@ def dashboard():
 @password_bp.route("/passwords/new", methods=["GET", "POST"])
 @login_required
 def new_password():
-    categories = password_service.list_categories()
+    categories = password_service().list_categories()
     form_data = {}
 
     if request.method == "POST":
-        _entry, errors, form_data = password_service.create_password_entry(
-            request.form,
-            user_id=current_user.id,
-        )
+        _entry, errors = password_service().create_password_entry(request.form)
 
         if errors:
             for e in errors:
                 flash(e, "danger")
+
+            form_data = {
+                "name": request.form.get("name", "").strip(),
+                "website": request.form.get("website", "").strip(),
+                "account_username": request.form.get("account_username", "").strip(),
+                "notes": request.form.get("notes", "").strip(),
+                "category_ids": [
+                    int(cid) for cid in request.form.getlist("category_ids") if cid.isdigit()
+                ],
+            }
         else:
             flash("Password created successfully.", "success")
             return redirect(url_for("password.dashboard"))
@@ -48,19 +56,25 @@ def new_password():
 @password_bp.route("/passwords/<int:entry_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_password(entry_id: int):
-    categories = password_service.list_categories()
-    entry = password_service.get_entry_or_404(entry_id)
+    categories = password_service().list_categories()
+    entry = password_service().get_entry_or_404(entry_id)
 
     if request.method == "POST":
-        errors, form_data = password_service.update_password_entry(
-            entry,
-            request.form,
-            user_id=current_user.id,
-        )
+        errors = password_service().update_password_entry(entry, request.form)
 
         if errors:
             for e in errors:
                 flash(e, "danger")
+
+            form_data = {
+                "name": request.form.get("name", "").strip(),
+                "website": request.form.get("website", "").strip(),
+                "account_username": request.form.get("account_username", "").strip(),
+                "notes": request.form.get("notes", "").strip(),
+                "category_ids": [
+                    int(cid) for cid in request.form.getlist("category_ids") if cid.isdigit()
+                ],
+            }
         else:
             flash("Password updated successfully.", "success")
             return redirect(url_for("password.dashboard"))
@@ -78,16 +92,16 @@ def edit_password(entry_id: int):
         categories=categories,
         active_tab="passwords",
         form_data=form_data,
-        form_mode="edit",
         entry_id=entry.id,
+        form_mode="edit",
     )
 
 
 @password_bp.route("/passwords/<int:entry_id>/delete", methods=["POST"])
 @login_required
 def delete_password(entry_id: int):
-    entry = password_service.get_entry_or_404(entry_id)
-    password_service.delete_password_entry(entry)
+    entry = password_service().get_entry_or_404(entry_id)
+    password_service().delete_password_entry(entry)
 
     flash("Password deleted successfully.", "success")
     return redirect(url_for("password.dashboard"))

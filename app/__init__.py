@@ -47,6 +47,9 @@ def create_app(config_overrides: dict | None = None) -> Flask:
     from app.services.auth_service import AuthService
     from app.repositories.sqlalchemy_category_repository import SqlAlchemyCategoryRepository
     from app.services.category_service import CategoryService
+    from app.repositories.sqlalchemy_password_repository import SqlAlchemyPasswordRepository
+    from app.services.password_service import PasswordService
+
     from app.utils.password_hashing import BcryptPasswordHasher
 
     app.extensions.setdefault("services", {})
@@ -59,5 +62,10 @@ def create_app(config_overrides: dict | None = None) -> Flask:
     app.extensions["services"]["category"] = CategoryService(
         categories=SqlAlchemyCategoryRepository(db),
     )
+
+    app.extensions["services"]["password"] = PasswordService(
+    passwords=SqlAlchemyPasswordRepository(db),
+    categories=SqlAlchemyCategoryRepository(db),
+)
 
     return app
