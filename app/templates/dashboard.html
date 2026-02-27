@@ -4,7 +4,7 @@
 <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-2 mb-3">
   <div>
     <h3 class="mb-0"><i class="bi bi-key-fill me-2"></i>Passwords</h3>
-    <div class="text-muted small">Grouped by category</div>
+    <div class="text-muted small">Select to view details</div>
   </div>
 
   <a class="btn btn-dark btn-sm text-nowrap" href="{{ url_for('password.new_password') }}">
@@ -50,39 +50,49 @@
                   <div class="list-group list-group-flush">
 
                     {% for e in cat.password_entries %}
-                      <div class="list-group-item">
+                      <div class="list-group-item vault-row"
+                           role="button"
+                           data-entry-id="{{ e.id }}"
+                           data-entry-name="{{ e.name|e }}"
+                           data-entry-website="{{ e.website|e }}"
+                           data-entry-username="{{ e.account_username|e }}"
+                           data-entry-notes="{{ (e.notes or '')|e }}"
+                           data-entry-updated="{{ e.updated_at.strftime('%d %b %Y %H:%M') if e.updated_at else '—' }}"
+                           data-entry-created="{{ e.created_at.strftime('%d %b %Y %H:%M') if e.created_at else '—' }}"
+                           data-is-admin="{{ 'true' if current_user.is_admin() else 'false' }}">
+
                         <div class="d-flex flex-column flex-md-row gap-2 align-items-start align-items-md-center">
                           <div class="flex-grow-1" style="min-width:0;">
                             <div class="fw-semibold text-truncate">{{ e.name }}</div>
                             <div class="small text-muted text-truncate">{{ e.website }}</div>
 
-                            <!-- Inline reveal -->
                             <div id="pwbox-{{ e.id }}"
                                  class="mt-2 small font-monospace border rounded-3 p-2 bg-light d-none">
                               <span id="pwtext-{{ e.id }}"></span>
                             </div>
                           </div>
 
-                          <!-- Action buttons -->
                           <div class="d-flex flex-wrap gap-1 justify-content-end ms-md-auto">
-
-                            <button class="btn btn-sm btn-outline-secondary"
-                                    type="button"
-                                    title="Copy URL"
-                                    data-copy-url="{{ e.website }}">
-                              <i class="bi bi-link-45deg"></i>
-                            </button>
-
                             <button class="btn btn-sm btn-outline-secondary"
                                     type="button"
                                     title="Copy username"
+                                    data-stop-row-click="1"
                                     data-copy-username="{{ e.account_username }}">
                               <i class="bi bi-person"></i>
                             </button>
 
                             <button class="btn btn-sm btn-outline-secondary"
                                     type="button"
+                                    title="Copy URL"
+                                    data-stop-row-click="1"
+                                    data-copy-url="{{ e.website }}">
+                              <i class="bi bi-link-45deg"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    type="button"
                                     title="Copy password"
+                                    data-stop-row-click="1"
                                     data-copy-password="{{ e.id }}">
                               <i class="bi bi-clipboard"></i>
                             </button>
@@ -90,6 +100,7 @@
                             <button class="btn btn-sm btn-outline-secondary"
                                     type="button"
                                     title="Reveal password"
+                                    data-stop-row-click="1"
                                     data-toggle-password="{{ e.id }}">
                               <i class="bi bi-eye"></i>
                             </button>
@@ -110,5 +121,7 @@
 
   </div>
 </div>
+
+{% include "components/_password_modal.html" %}
 
 {% endblock %}
