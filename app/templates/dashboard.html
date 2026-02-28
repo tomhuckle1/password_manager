@@ -19,7 +19,8 @@
       <div class="text-muted">No categories available to display.</div>
     {% else %}
       <div class="accordion" id="categoryAccordion">
-
+        
+        <!-- Loop through categories -->
         {% for cat in categories %}
           <div class="accordion-item">
             <h2 class="accordion-header" id="heading-{{ cat.id }}">
@@ -49,6 +50,7 @@
                 {% else %}
                   <div class="list-group list-group-flush">
 
+                    <!-- Loop through pwds-->
                     {% for e in cat.password_entries %}
                       <div class="list-group-item vault-row"
                            role="button"
@@ -71,15 +73,8 @@
                               <span id="pwtext-{{ e.id }}"></span>
                             </div>
                           </div>
-
+                          <!-- Actions -->
                           <div class="d-flex flex-wrap gap-1 justify-content-end ms-md-auto">
-                            <button class="btn btn-sm btn-outline-secondary"
-                                    type="button"
-                                    title="Copy username"
-                                    data-stop-row-click="1"
-                                    data-copy-username="{{ e.account_username }}">
-                              <i class="bi bi-person"></i>
-                            </button>
 
                             <button class="btn btn-sm btn-outline-secondary"
                                     type="button"
@@ -87,6 +82,13 @@
                                     data-stop-row-click="1"
                                     data-copy-url="{{ e.website }}">
                               <i class="bi bi-link-45deg"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    title="Copy username"
+                                    data-stop-row-click="1"
+                                    data-copy-username="{{ e.account_username }}">
+                              <i class="bi bi-person"></i>
                             </button>
 
                             <button class="btn btn-sm btn-outline-secondary"
