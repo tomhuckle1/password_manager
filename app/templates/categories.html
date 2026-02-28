@@ -49,13 +49,13 @@
                 </span>
               </div>
 
+              <!-- Actions -->
               <div class="d-flex flex-wrap gap-1 ms-md-auto">
                 <a class="btn btn-sm btn-outline-primary"
                    href="{{ url_for('category.edit_category', category_id=cat.id) }}"
                    title="Edit category">
                   <i class="bi bi-pencil-square"></i>
                 </a>
-
                 {% if current_user.is_admin() %}
                   <form method="POST"
                         action="{{ url_for('category.delete_category', category_id=cat.id) }}"

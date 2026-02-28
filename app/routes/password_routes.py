@@ -19,6 +19,7 @@ def dashboard():
 
 @password_bp.route("/api/password/<int:entry_id>/password", methods=["POST"])
 @login_required
+# Get decrypted password
 def api_get_password(entry_id: int):
     entry = password_service().get_entry_or_404(entry_id)
 
@@ -32,9 +33,11 @@ def api_get_password(entry_id: int):
 @password_bp.route("/passwords/new", methods=["GET", "POST"])
 @login_required
 def new_password():
+    # Shpw list of categories in form
     categories = password_service().list_categories()
     form_data = {}
 
+    # Create password
     if request.method == "POST":
         _entry, errors = password_service().create_password_entry(request.form)
 
@@ -42,6 +45,7 @@ def new_password():
             for e in errors:
                 flash(e, "danger")
 
+            # eturn form data if error
             form_data = {
                 "name": request.form.get("name", "").strip(),
                 "website": request.form.get("website", "").strip(),
@@ -70,6 +74,7 @@ def edit_password(entry_id: int):
     categories = password_service().list_categories()
     entry = password_service().get_entry_or_404(entry_id)
 
+    # Edit password
     if request.method == "POST":
         errors = password_service().update_password_entry(entry, request.form)
 
@@ -77,6 +82,7 @@ def edit_password(entry_id: int):
             for e in errors:
                 flash(e, "danger")
 
+            # Return form data if error
             form_data = {
                 "name": request.form.get("name", "").strip(),
                 "website": request.form.get("website", "").strip(),
@@ -90,6 +96,7 @@ def edit_password(entry_id: int):
             flash("Password updated successfully.", "success")
             return redirect(url_for("password.dashboard"))
     else:
+        # Get existing password
         form_data = {
             "name": entry.name or "",
             "website": entry.website or "",
@@ -111,11 +118,13 @@ def edit_password(entry_id: int):
 @password_bp.route("/passwords/<int:entry_id>/delete", methods=["POST"])
 @login_required
 def delete_password(entry_id: int):
+    # Check user is admin
     if not current_user.is_admin():
         flash("You do not have permission to delete passwords.", "danger")
         return redirect(url_for("password.dashboard"))
 
     entry = password_service().get_entry_or_404(entry_id)
+    # Delete password
     password_service().delete_password_entry(entry)
 
     flash("Password deleted successfully.", "success")

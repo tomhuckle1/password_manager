@@ -6,5 +6,6 @@ export function showToast(message) {
   toast.textContent = message;
 
   document.body.appendChild(toast);
+  // Remove toast after 3 seconds
   setTimeout(() => toast.remove(), 3000);
 }

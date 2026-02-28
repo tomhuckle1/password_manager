@@ -18,6 +18,7 @@ class CategoryService:
         return self.categories.get(category_id)
 
     def create_category(self, form):
+        # Validate
         data, errors = validate_category_form(
             name=form.get("name"),
             description=form.get("description"),
@@ -37,6 +38,7 @@ class CategoryService:
             return None, ["A category with that name already exists."], data
 
     def update_category(self, cat: Category, form):
+        # Validate
         data, errors = validate_category_form(
             name=form.get("name"),
             description=form.get("description"),
@@ -54,6 +56,7 @@ class CategoryService:
             return ["A category with that name already exists."], data
 
     def can_delete_category(self, cat: Category) -> bool:
+        # returns true if no passwords associated with category
         return not self.categories.has_password_entries(cat)
 
     def delete_category(self, cat: Category) -> None:
