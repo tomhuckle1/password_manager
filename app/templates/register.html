@@ -33,11 +33,21 @@
               <span class="input-group-text"><i class="bi bi-lock"></i></span>
               <input class="form-control" type="password" name="password" required>
             </div>
-            <div class="form-text">
-              Must be at least 8 characters and include:
-              an uppercase letter, a lowercase letter, a number, and a symbol.
-            </div>   
-         </div>       
+            <div class="form-text mt-2" id="passwordRequirements">
+                <div id="req-length" class="text-danger">At least 8 characters</div>
+                <div id="req-upper" class="text-danger">One uppercase letter</div>
+                <div id="req-lower" class="text-danger">One lowercase letter</div>
+                <div id="req-number" class="text-danger">One number</div>
+                <div id="req-symbol" class="text-danger">One symbol</div>
+            </div>
+         </div>     
+
+         <div class="mt-2">
+            <div class="progress" style="height:6px;">
+              <div id="passwordStrengthBar" class="progress-bar" role="progressbar"></div>
+            </div>
+            <small id="passwordStrengthText" class="form-text text-muted"></small>
+          </div>
 
           <div class="mb-3">
             <label class="form-label">Confirm password</label>
