@@ -5,6 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from app.utils.logger import configure_logging
+from app.utils.error_handlers import register_error_handlers
+
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -31,6 +34,8 @@ def create_app(config_overrides: dict | None = None) -> Flask:
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    configure_logging(app)
+    register_error_handlers(app)
 
     # Blueprints
     from app.routes.auth_routes import auth_bp
