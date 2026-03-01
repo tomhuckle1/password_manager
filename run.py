@@ -1,5 +1,6 @@
 from app import create_app, db
 from seed import main as seed_main
+from app.models import User
 
 app = create_app()
 
