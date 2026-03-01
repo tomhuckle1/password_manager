@@ -1,5 +1,4 @@
 from __future__ import annotations
-from flask_migrate import upgrade
 from app import create_app, db, bcrypt
 from app.models import User, Category, PasswordEntry
 from app.models.user import ROLE_ADMIN, ROLE_REGULAR
@@ -8,23 +7,15 @@ from app.utils.encryptor import FernetEncryptor
 def hash_pw(pw: str) -> str:
     return bcrypt.generate_password_hash(pw).decode("utf-8")
 
-def reset_database() -> None:
-    # Apply any pending migrations to the database
-    upgrade()
-
-    # Clear tables to ensure a clean slate
-    db.session.execute(db.text("DELETE FROM password_entry_categories"))
-    db.session.execute(db.text("DELETE FROM password_entries"))
-    db.session.execute(db.text("DELETE FROM categories"))
-    db.session.execute(db.text("DELETE FROM users"))
-    db.session.commit()
-
 def main() -> None:
     app = create_app()
 
     with app.app_context():
-        # Reset the database to ensure the latest migrations are applied
-        reset_database()
+        # Drop tables
+        db.drop_all()
+
+        # Recreate all tables
+        db.create_all()
 
         encryptor = FernetEncryptor(app.config["ENCRYPTION_KEY"])
 
