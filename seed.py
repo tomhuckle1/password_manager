@@ -63,16 +63,16 @@ def main() -> None:
 
         # Passwords
         entries_data = [
-            ("Barclays Business Banking", "https://bank.barclays.co.uk", "biz-admin", "Barclays!123", "Account access.", ["Banking"]),
-            ("HMRC Business Tax Account", "https://www.gov.uk/log-in-register-hmrc-online-services", "hmrc-user", "TaxPwd!123", "VAT submissions.", ["Government"]),
-            ("Companies House WebFiling", "https://ewf.companieshouse.gov.uk", "ch-admin", "ChPwd!123", "Company config.", ["Government"]),
-            ("British Gas Business", "https://www.britishgas.co.uk/business", "energy-admin", "EnergyPwd!123", "Gas management.", ["Utilities"]),
-            ("Thames Water Portal", "https://www.thameswater.co.uk/business", "water-user", "WaterPwd!123", "water services.", ["Utilities"]),
-            ("Aviva Business Insurance", "https://www.aviva.co.uk/business", "insurance-user", "Insure!123", "Policy documents and claims.", ["Insurance"]),
-            ("Rightmove Landlord Account", "https://www.rightmove.co.uk", "landlord-user", "Property!123", "Rental listings.", ["Property"]),
-            ("Zoopla Property Manager", "https://www.zoopla.co.uk", "zoopla-admin", "Zoopla!123", "Property portfolio management.", ["Property"]),
-            ("National Rail Business", "https://www.nationalrail.co.uk", "travel-admin", "RailPwd!123", "Rail bookings.", ["Transport"]),
-            ("TfL Oyster Admin", "https://tfl.gov.uk", "tfl-admin", "Oyster!123", "Transport for London.", ["Transport"]),
+            ("Barclays Business Banking", "bank.barclays.co.uk", "biz-admin", "Barclays!123", "Account access.", ["Banking"]),
+            ("HMRC Business Tax Account", "gov.uk", "hmrc-user", "TaxPwd!123", "VAT submissions.", ["Government"]),
+            ("Companies House WebFiling", "ewf.companieshouse.gov.uk", "ch-admin", "ChPwd!123", "Company config.", ["Government"]),
+            ("British Gas Business", "www.britishgas.co.uk", "energy-admin", "EnergyPwd!123", "Gas management.", ["Utilities"]),
+            ("Thames Water Portal", "thameswater.co.uk", "water-user", "WaterPwd!123", "water services.", ["Utilities"]),
+            ("Aviva Business Insurance", "aviva.co.uk", "insurance-user", "Insure!123", "Policy documents and claims.", ["Insurance"]),
+            ("Rightmove Landlord Account", "www.rightmove.co.uk", "landlord-user", "Property!123", "Rental listings.", ["Property"]),
+            ("Zoopla Property Manager", "zoopla.co.uk", "zoopla-admin", "Zoopla!123", "Property portfolio management.", ["Property"]),
+            ("National Rail Business", "nationalrail.co.uk", "travel-admin", "RailPwd!123", "Rail bookings.", ["Transport"]),
+            ("TfL Oyster Admin", "tfl.gov.uk", "tfl-admin", "Oyster!123", "Transport for London.", ["Transport"]),
         ]
 
         entries: list[PasswordEntry] = []
